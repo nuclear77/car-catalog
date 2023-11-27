@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Car List</title>
-</head>
-<body>
-    <h1>Car List</h1>
-    <ul>
-        {% for car in cars %}
-        <li><a href="/car/{{ car.id }}/">{{ car.make }} {{ car.model }}</a></li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% for car in cars %}
+    <h2>{{ car.make }} {{ car.model }}</h2>
+    <p><a href="{% url 'car_detail' car.id %}">View details</a></p>
+    <p><a href="{% url 'edit_car' car.id %}">Edit</a> | <a href="{% url 'delete_car' car.id %}">Delete</a></p>
+{% endfor %}
+<p><a href="{% url 'add_car' %}">Add a new car</a></p>

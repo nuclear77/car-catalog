@@ -1,0 +1,7 @@
+<h2>Добавление машины</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+<p><a href="{% url 'car_list' %}">Отмена</a></p>

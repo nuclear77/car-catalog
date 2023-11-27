@@ -1,0 +1,9 @@
+<h2>Покупка автомобиля: {{ car.make }} {{ car.model }}</h2>
+<form method="post">
+  {% csrf_token %}
+  <label for="buyer_name">Имя покупателя:</label>
+  <input type="text" name="buyer_name" id="buyer_name" required>
+  <br>
+  <button type="submit">Оформить покупку</button>
+</form>
+<p><a href="{% url 'car_detail' car.id %}">Назад к деталям автомобиля</a></p>

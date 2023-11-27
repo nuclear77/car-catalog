@@ -7,6 +7,7 @@ class Car(models.Model):
     model = models.CharField(max_length=50)
     image = models.ImageField(upload_to='car_images')
     link = models.URLField()
+    extras = models.ManyToManyField('catalog.Extras')
 
     class Meta:
         app_label = 'catalog'
@@ -20,3 +21,12 @@ class Car(models.Model):
         if self.image:
             img = Image.open(self.image.path)
             img.save(self.image.path)
+
+
+class Extras(models.Model):
+    name = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
