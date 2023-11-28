@@ -5,25 +5,11 @@ from .models import Car
 class CarForm(forms.ModelForm):
     class Meta:
         model = Car
-        fields = ('make', 'model', 'image', 'link')
+        fields = ('make', 'model', 'price', 'image', 'link')
 
 
 class CarPurchaseForm(forms.Form):
-    make = forms.CharField(label='Марка')
-    model = forms.CharField(label='Модель')
-    extras = forms.ModelMultipleChoiceField(
-        queryset=None,
-        widget=forms.CheckboxSelectMultiple,
-        label='Дополнения'
-    )
-
-    def __init__(self, *args, **kwargs):
-        extras_choices = kwargs.pop('extras_choices')
-        super().__init__(*args, **kwargs)
-        self.fields['extras'].queryset = extras_choices
-
-
-class ExtrasForm(forms.Form):
+    name = forms.CharField(label='Имя заказчика')
     CHOICES = (
         ('floor_mats', 'Коврики'),
         ('rain_guard', 'Антидождь'),
@@ -34,3 +20,5 @@ class ExtrasForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         label='Дополнения'
     )
+
+

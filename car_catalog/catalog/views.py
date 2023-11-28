@@ -1,6 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CarForm, CarPurchaseForm
-from .models import Car, Extras
+from .models import Car
+import telegram
+from django.conf import settings
+import asyncio
+import aiohttp
+
 
 
 def car_list(request):
@@ -51,29 +56,47 @@ def delete_car(request, car_id):
 
     return render(request, 'delete_car.html', {'car': car})
 
+async def send_telegram_notification(bot_token, chat_id, message):
+    async with aiohttp.ClientSession() as session:
+        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+        payload = {
+            'chat_id': chat_id,
+            'text': message
+        }
+        async with session.post(url, data=payload) as response:
+            response_data = await response.json()
+            if not response_data['ok']:
+                print('Ошибка при отправке уведомления в Telegram:', response_data['description'])
+
 
 def purchase_car(request, car_id):
     car = get_object_or_404(Car, id=car_id)
 
     if request.method == 'POST':
-        form = CarPurchaseForm(request.POST, request.FILES)
+        form = CarPurchaseForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('purchase_success')
+            name = form.cleaned_data['name']
+            extras = form.cleaned_data['extras']
+
+            # Отправка уведомления в Telegram
+            bot_token = settings.TELEGRAM_BOT_TOKEN
+            chat_id = settings.TELEGRAM_CHAT_ID
+            message = f"Машина '{car.make} {car.model}' была куплена заказчиком '{name}'."
+
+            asyncio.run(send_telegram_notification(bot_token, chat_id, message))
+
+            return redirect('/')
     else:
-        form = CarPurchaseForm(extras_choices=Car.objects.all())
+        form = CarPurchaseForm()
+        extras_choices = [(extra, extra) for extra in car.extras.all().values_list('name', flat=True)]
+
+    extras_form =CarPurchaseForm()
 
     context = {
-        'form': form,
+        'form': CarPurchaseForm,
         'car': car,
+        'extras_form': extras_form,
     }
     return render(request, 'purchase_car.html', context)
 
 
-def select_extras(request, car_id):
-    car = Car.objects.get(id=car_id)
-    if request.method == 'POST':
-        selected_extras = request.POST.getlist('extras')
-        return redirect('purchase_car')
-    else:
-        return render(request, 'select_extras.html', {'car': car})

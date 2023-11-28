@@ -1,20 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Каталог машин</title>
-</head>
-<body>
-    <h1>каталог машин</h1>
-    <ul>
+
+
+{% block content %}
+  <h1>Car Catalog</h1>
+  <ul>
     {% for car in cars %}
-        <li>
-            <h2>{{ car.make }} {{ car.model }}</h2>
-            <img src="{{ car.image.url }}" alt="{{ car.make }} {{ car.model }}">
-            <a href="{{ car.link }}">More Info</a>
-        </li>
-    {% empty %}
-        <li>Нет машин в каталоге.</li>
+      <li>
+        <h2>{{ car.make }} {{ car.model }}</h2>
+        <p>Price: ${{ car.price }}</p>
+        <img src="{{ car.image.url }}" alt="{{ car.make }} {{ car.model }}">
+        <a href="{% url 'purchase_car' car.id %}">Buy</a>
+      </li>
     {% endfor %}
-    </ul>
-</body>
-</html>
+  </ul>
+{% endblock %}
