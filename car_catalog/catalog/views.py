@@ -5,6 +5,7 @@ import telegram
 from django.conf import settings
 import asyncio
 import aiohttp
+import datetime
 
 
 
@@ -78,10 +79,13 @@ def purchase_car(request, car_id):
             name = form.cleaned_data['name']
             extras = form.cleaned_data['extras']
 
+            delivery_date = datetime.date.today() + datetime.timedelta(days=3)
+
             # Отправка уведомления в Telegram
             bot_token = settings.TELEGRAM_BOT_TOKEN
             chat_id = settings.TELEGRAM_CHAT_ID
-            message = f"Машина '{car.make} {car.model}' была куплена заказчиком '{name}'."
+            message = f"Машина '{car.make} {car.model}' была куплена заказчиком '{name}'. " \
+                      f"Дата доставки: {delivery_date.strftime('%Y-%m-%d')}."
 
             asyncio.run(send_telegram_notification(bot_token, chat_id, message))
 
