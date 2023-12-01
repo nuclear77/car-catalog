@@ -6,7 +6,7 @@ class Car(models.Model):
     make = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
-    image = models.ImageField(upload_to='car_images')
+    image = models.ImageField(upload_to='car_images', default='default_image.jpg')
     link = models.URLField()
     extras = models.ManyToManyField('catalog.Extras')
 
