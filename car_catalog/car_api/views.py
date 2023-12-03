@@ -7,13 +7,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 
-class CarDeleteView(APIView):
-    def delete(self, request, car_id):
-        car = get_object_or_404(Car, id=car_id)
-        car.delete()
-        return Response({"detail": "Машина успешно удалена"}, status=204)
-
-
 @api_view(['GET'])
 def car_list(request):
     cars = Car.objects.all()
@@ -52,14 +45,13 @@ def car_update(request, car_id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# @api_view(['DELETE'])
-# def car_delete(request, car_id):
-#     @api_view(['DELETE'])
-#     def car_delete(request, car_id):
-#         try:
-#             car = Car.objects.get(id=car_id)
-#         except Car.DoesNotExist:
-#             return Response(status=status.HTTP_404_NOT_FOUND)
-#
-#         car.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['DELETE'])
+def car_delete(request, car_id):
+    try:
+        car = Car.objects.get(id=car_id)
+    except Car.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    car.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
