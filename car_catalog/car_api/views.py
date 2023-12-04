@@ -45,7 +45,6 @@ def car_update(request, car_id):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 @api_view(['DELETE'])
 def car_delete(request, car_id):
     try:
