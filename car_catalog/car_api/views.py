@@ -5,6 +5,16 @@ from .serializers import CarSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import (
+    CreateAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    DestroyAPIView,
+    UpdateAPIView,
+    ListCreateAPIView,
+    RetrieveUpdateAPIView,
+    RetrieveDestroyAPIView,
+)
 
 
 @api_view(['GET'])
@@ -54,3 +64,49 @@ def car_delete(request, car_id):
 
     car.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+#начало новых классов из дз
+
+
+class CarCreateAPIView(CreateAPIView):
+    serializer_class = CarSerializer
+
+
+class CarListAPIView(ListAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+
+
+class CarRetrieveAPIView(RetrieveAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    lookup_field = 'pk'
+
+
+class CarDestroyAPIView(DestroyAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    lookup_field = 'pk'
+
+
+class CarUpdateAPIView(UpdateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    lookup_field = 'pk'
+
+
+class CarListCreateAPIView(ListCreateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+
+
+class CarRetrieveUpdateAPIView(RetrieveUpdateAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    lookup_field = 'pk'
+
+
+class CarRetrieveDestroyAPIView(RetrieveDestroyAPIView):
+    queryset = Car.objects.all()
+    serializer_class = CarSerializer
+    lookup_field = 'pk'
