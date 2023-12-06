@@ -1,12 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import CarForm, CarPurchaseForm
 from .models import Car
-import telegram
 from django.conf import settings
 import asyncio
 import aiohttp
 import datetime
-
 
 
 def car_list(request):
@@ -57,6 +55,7 @@ def delete_car(request, car_id):
 
     return render(request, 'delete_car.html', {'car': car})
 
+
 async def send_telegram_notification(bot_token, chat_id, message):
     async with aiohttp.ClientSession() as session:
         url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
@@ -94,7 +93,7 @@ def purchase_car(request, car_id):
         form = CarPurchaseForm()
         extras_choices = [(extra, extra) for extra in car.extras.all().values_list('name', flat=True)]
 
-    extras_form =CarPurchaseForm()
+    extras_form = CarPurchaseForm()
 
     context = {
         'form': CarPurchaseForm,

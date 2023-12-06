@@ -15,66 +15,41 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView,
     RetrieveDestroyAPIView,
 )
+from rest_framework import generics
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 
-@api_view(['GET'])
-def car_list(request):
-    cars = Car.objects.all()
-    serializer = CarSerializer(cars, many=True)
-    return Response(serializer.data)
+# @api_view(['GET'])
+# def car_search(request):
+#     q = request.GET.get('q')
+#     cars = Car.objects.filter(make__icontains=q) | Car.objects.filter(model__icontains=q)
+#     serializer = CarSerializer(cars, many=True)
+#     return Response(serializer.data)
 
-
-@api_view(['GET'])
-def car_search(request):
-    q = request.GET.get('q')
-    cars = Car.objects.filter(make__icontains=q) | Car.objects.filter(model__icontains=q)
-    serializer = CarSerializer(cars, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['POST'])
-def car_create(request):
-    serializer = CarSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['PUT'])
-def car_update(request, car_id):
-    try:
-        car = Car.objects.get(id=car_id)
-    except Car.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    serializer = CarSerializer(car, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['DELETE'])
-def car_delete(request, car_id):
-    try:
-        car = Car.objects.get(id=car_id)
-    except Car.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    car.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
 
 #начало новых классов из дз
+class PurchaseList(generics.ListAPIView):
+    serializer_class = CarSerializer
+
+    def get_queryset(self):
+        name_1 = self.kwargs['make']
+        return Car.objects.filter(make=name_1)
 
 
 class CarCreateAPIView(CreateAPIView):
     serializer_class = CarSerializer
 
 
-class CarListAPIView(ListAPIView):
+class CarListAPIView(generics.ListAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
+    # filter_backends = [DjangoFilterBackend]
+    # filter_backends = [filters.SearchFilter]
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['make', 'model']
+    # filterset_fields = ['price']
+    # search_fields = ['make', 'model']
 
 
 class CarRetrieveAPIView(RetrieveAPIView):
