@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import Car
+from .models import CarAPI
 
 
 class CarSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Car
-        fields = ('id', 'make', 'model', 'price')
+        model = CarAPI
+        fields = ('id', 'make', 'model', 'price', 'image')

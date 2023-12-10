@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
-from .models import Car
+from .models import CarAPI
 from .serializers import CarSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
@@ -18,23 +18,20 @@ from rest_framework.generics import (
 from rest_framework import generics
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django.http import HttpResponse
+from openpyxl import Workbook
+from openpyxl.drawing.image import Image as ExcelImage
+from PIL import Image as PILImage
+from io import BytesIO
 
 
-# @api_view(['GET'])
-# def car_search(request):
-#     q = request.GET.get('q')
-#     cars = Car.objects.filter(make__icontains=q) | Car.objects.filter(model__icontains=q)
-#     serializer = CarSerializer(cars, many=True)
-#     return Response(serializer.data)
 
-
-#начало новых классов из дз
 class PurchaseList(generics.ListAPIView):
     serializer_class = CarSerializer
 
     def get_queryset(self):
         name_1 = self.kwargs['make']
-        return Car.objects.filter(make=name_1)
+        return CarAPI.objects.filter(make=name_1)
 
 
 class CarCreateAPIView(CreateAPIView):
@@ -42,7 +39,7 @@ class CarCreateAPIView(CreateAPIView):
 
 
 class CarListAPIView(generics.ListAPIView):
-    queryset = Car.objects.all()
+    queryset = CarAPI.objects.all()
     serializer_class = CarSerializer
     # filter_backends = [DjangoFilterBackend]
     # filter_backends = [filters.SearchFilter]
@@ -53,35 +50,69 @@ class CarListAPIView(generics.ListAPIView):
 
 
 class CarRetrieveAPIView(RetrieveAPIView):
-    queryset = Car.objects.all()
+    queryset = CarAPI.objects.all()
     serializer_class = CarSerializer
     lookup_field = 'pk'
 
 
 class CarDestroyAPIView(DestroyAPIView):
-    queryset = Car.objects.all()
+    queryset = CarAPI.objects.all()
     serializer_class = CarSerializer
     lookup_field = 'pk'
 
 
 class CarUpdateAPIView(UpdateAPIView):
-    queryset = Car.objects.all()
+    queryset = CarAPI.objects.all()
     serializer_class = CarSerializer
     lookup_field = 'pk'
 
 
 class CarListCreateAPIView(ListCreateAPIView):
-    queryset = Car.objects.all()
+    queryset = CarAPI.objects.all()
     serializer_class = CarSerializer
 
 
 class CarRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-    queryset = Car.objects.all()
+    queryset = CarAPI.objects.all()
     serializer_class = CarSerializer
     lookup_field = 'pk'
 
 
 class CarRetrieveDestroyAPIView(RetrieveDestroyAPIView):
-    queryset = Car.objects.all()
+    queryset = CarAPI.objects.all()
     serializer_class = CarSerializer
     lookup_field = 'pk'
+
+
+def export_cars_to_excel(request):
+    workbook = Workbook()
+    sheet = workbook.active
+
+    cars = CarAPI.objects.all()
+
+    sheet.append(['Make', 'Model', 'Price', 'Image'])
+
+    for car in cars:
+        try:
+            img = PILImage.open(car.image.path)
+
+            img_buffer = BytesIO()
+
+            img.save(img_buffer, format='PNG')
+
+            excel_img = ExcelImage(img_buffer)
+            excel_img.width = 60
+            excel_img.height = 80
+
+            sheet.append([car.make, car.model, car.price, ''])
+            sheet.add_image(excel_img, f'D4')
+
+        except Exception as e:
+            print(f"Error processing image for car {car.id}: {str(e)}")
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=cars.xlsx'
+
+    workbook.save(response)
+
+    return response
