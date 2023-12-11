@@ -32,10 +32,11 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
     'catalog',
     'django_filters',
+    'django.contrib.auth',
+    'users',
     'car_api',
     'rest_framework',
     'django.contrib.sessions',
@@ -134,5 +135,9 @@ TELEGRAM_CHAT_ID = '-4072827401'
 TELEGRAM_BOT_TOKEN = '6857479479:AAFUCnoBNvpfBCQy36oPSu3GECOF_AtqF4Q'
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 1,
 }
+
+

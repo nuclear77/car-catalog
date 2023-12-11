@@ -5,6 +5,10 @@ from django.conf import settings
 import asyncio
 import aiohttp
 import datetime
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 
 
 def car_list(request):
@@ -102,5 +106,20 @@ def purchase_car(request, car_id):
         'extras_form': extras_form,
     }
     return render(request, 'purchase_car.html', context)
+
+
+class SignUpView(CreateView):
+    template_name = 'registration/signup.html'
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+
+
+class CustomLoginView(LoginView):
+    template_name = 'registration/login.html'
+
+
+class CustomLogoutView(LogoutView):
+    pass
+
 
 

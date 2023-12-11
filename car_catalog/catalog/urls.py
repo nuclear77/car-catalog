@@ -3,6 +3,9 @@ from django.conf.urls.static import static
 from django.urls import path
 from . import views
 from .views import car_catalog
+from django.urls import path
+from django.contrib.auth.views import LoginView, LogoutView
+from .views import SignUpView
 
 
 urlpatterns = [
@@ -13,4 +16,7 @@ urlpatterns = [
     path('car/<int:car_id>/edit/', views.edit_car, name='edit_car'),
     path('car/<int:car_id>/delete/', views.delete_car, name='delete_car'),
     path('car/purchase/<int:car_id>/', views.purchase_car, name='purchase_car'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('signup/', SignUpView.as_view(), name='signup'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

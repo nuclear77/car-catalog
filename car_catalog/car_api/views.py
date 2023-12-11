@@ -102,7 +102,7 @@ def export_cars_to_excel(request):
 
             excel_img = ExcelImage(img_buffer)
             excel_img.width = 60
-            excel_img.height = 80
+            excel_img.height = 40
 
             sheet.append([car.make, car.model, car.price, ''])
             sheet.add_image(excel_img, f'D4')
