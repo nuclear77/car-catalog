@@ -19,4 +19,6 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('signup/', SignUpView.as_view(), name='signup'),
+    path('shop', views.send_email, name='send_email'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

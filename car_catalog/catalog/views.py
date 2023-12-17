@@ -9,6 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
+from django.http import HttpResponse
 
 
 def car_list(request):
@@ -120,6 +121,62 @@ class CustomLoginView(LoginView):
 
 class CustomLogoutView(LogoutView):
     pass
+
+
+def send_email(request):
+    if request.path == '/shop':
+        import smtplib
+        from email.mime.multipart import MIMEMultipart
+        from email.mime.text import MIMEText
+        from email.mime.image import MIMEImage
+        from email.header import Header
+        import base64
+
+        login = 'spiritvoideu@gmail.com'
+        password = 'qzdzybrhufpbepop'  # App Password or regular Gmail
+
+        try:
+            # Connect to the SMTP server
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(login, password)
+
+            subject = 'Тема вашего HTML-письма'
+
+            # Указываем путь до файла с HTML-контентом и изображением
+            html_file_path = '/home/lirik12/PycharmProjects/pythonProject7/car-catalog/car_catalog/catalog/templates/send_mail/this.html'
+            image_path = '/home/lirik12/PycharmProjects/pythonProject7/car-catalog/car_catalog/media/car_images/mclaren.jpeg'
+
+            # Читаем содержимое HTML-файла
+            with open(html_file_path, 'r', encoding='utf-8') as html_file:
+                html_content = html_file.read()
+
+            # Создаем MIMEMultipart object
+            msg = MIMEMultipart()
+            msg['Subject'] = Header(subject, 'utf-8')
+
+            # Читаем содержимое изображения и кодируем в base64
+            with open(image_path, 'rb') as image_file:
+                image_data = image_file.read()
+                image_base64 = base64.b64encode(image_data).decode('utf-8')
+
+            # Attach HTML content with image to the email
+            msg.attach(MIMEText(html_content, 'html'))
+
+            # Attach image to the email as inline
+            image_attachment = MIMEImage(image_data, name='image.jpg')
+            image_attachment.add_header('Content-ID', '<image>')
+            msg.attach(image_attachment)
+
+            # Send the email
+            server.sendmail(login, 'spiritvoideu@gmail.com', msg.as_string())
+            return HttpResponse("Email sent successfully!")
+
+        finally:
+            # Ensure the connection is closed
+            server.quit()
+    else:
+        return HttpResponse("Invalid URL")
 
 
 
