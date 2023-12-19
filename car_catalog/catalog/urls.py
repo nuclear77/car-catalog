@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
 from . import views
-from .views import car_catalog
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 from .views import SignUpView

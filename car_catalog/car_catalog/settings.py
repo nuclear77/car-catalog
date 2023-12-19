@@ -37,14 +37,14 @@ INSTALLED_APPS = [
     'django_filters',
     'django.contrib.auth',
     'djoser',
-    "django.contrib.staticfiles",
-    "debug_toolbar",
     'users',
+    "debug_toolbar",
     'car_api',
     'rest_framework',
     'rest_framework.authtoken',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -150,7 +150,7 @@ REST_FRAMEWORK = {
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-        "LOCATION": "127.0.0.1:11211",
+        'LOCATION': '127.0.0.1:11211',
     }
 }
 

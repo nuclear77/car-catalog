@@ -10,6 +10,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from django.http import HttpResponse
+from django.views.decorators.cache import cache_page
 
 
 def car_list(request):
@@ -123,6 +124,7 @@ class CustomLogoutView(LogoutView):
     pass
 
 
+@cache_page(60 * 15)
 def send_email(request):
     if request.path == '/shop':
         import smtplib
@@ -144,8 +146,8 @@ def send_email(request):
             subject = 'Тема вашего HTML-письма'
 
             # Указываем путь до файла с HTML-контентом и изображением
-            html_file_path = '/home/user/PycharmProjects/pythonProject10/car-catalog/car_catalog/catalog/templates/send_mail/this.html'
-            image_path = '/home/user/PycharmProjects/pythonProject10/car-catalog/car_catalog/media/car_images/mclaren.jpeg'
+            html_file_path = '/home/lirik12/PycharmProjects/pythonProject7/car-catalog/car_catalog/catalog/templates/send_mail/this.html'
+            image_path = '//home/lirik12/PycharmProjects/pythonProject7/car-catalog/car_catalog/media/car_images/mclaren.jpeg'
 
             # Читаем содержимое HTML-файла
             with open(html_file_path, 'r', encoding='utf-8') as html_file:
