@@ -5,6 +5,5 @@ from .views import protected_view
 
 
 urlpatterns = [
-    path('', views.home, name = 'home'),
     path('protected/', protected_view, name='protected_view'),
 ]
