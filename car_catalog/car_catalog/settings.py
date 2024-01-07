@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'users',
     "debug_toolbar",
     'car_api',
+    'drf_yasg',
     'rest_framework',
     'rest_framework.authtoken',
     'django.contrib.sessions',
