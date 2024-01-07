@@ -17,6 +17,8 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.header import Header
 import base64
+from .models import CurrencyPrice
+from django.http import Http404
 
 
 def car_list(request):
@@ -175,3 +177,21 @@ def send_email(request):
     finally:
         # Ensure the connection is closed
         server.quit()
+
+
+
+def show_currency_price(request):
+    # Получение последней стоимости валюты
+    latest_price = CurrencyPrice.objects.order_by('-timestamp').first()
+
+    # Проверка наличия данных
+    if not latest_price:
+        context = {}
+    else:
+        context = {
+            'symbol': latest_price.symbol,
+            'price': latest_price.price,
+            'timestamp': latest_price.timestamp,
+        }
+
+    return render(request, 'currency_price.html', context)
