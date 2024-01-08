@@ -10,15 +10,16 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from django.http import HttpResponse
-from django.views.decorators.cache import cache_page
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.header import Header
 import base64
+from django.shortcuts import render
 from .models import CurrencyPrice
-from django.http import Http404
+from .tasks import fetch_binance_price
+from django.http import HttpResponseServerError
 
 
 def car_list(request):
@@ -178,19 +179,16 @@ def send_email(request):
         server.quit()
 
 
-
 def show_currency_price(request):
-    # Получение последней стоимости валюты
-    latest_price = CurrencyPrice.objects.order_by('-timestamp').first()
+    try:
+        latest_price = CurrencyPrice.objects.latest('timestamp')
+    except CurrencyPrice.DoesNotExist:
+        latest_price = None
 
-    # Проверка наличия данных
-    if not latest_price:
-        context = {}
-    else:
-        context = {
-            'symbol': latest_price.symbol,
-            'price': latest_price.price,
-            'timestamp': latest_price.timestamp,
-        }
+    context = {
+        'symbol': getattr(latest_price, 'symbol', ''),
+        'price': getattr(latest_price, 'price', ''),
+        'timestamp': getattr(latest_price, 'timestamp', ''),
+    }
 
     return render(request, 'currency_price.html', context)

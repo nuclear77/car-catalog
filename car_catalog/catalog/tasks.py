@@ -1,41 +1,31 @@
-from celery import Celery
-from celery.schedules import crontab
-import requests
 from celery import shared_task
-from .models import CurrencyPrice
 from decimal import Decimal
-from datetime import datetime
-from django.shortcuts import render
-from django.http import HttpResponse
-import logging
-
-
-logger = logging.getLogger(__name__)
+import requests
+from .models import CurrencyPrice
 
 
 @shared_task
 def fetch_binance_price():
-    try:
-        response = requests.get('https://api.binance.com/api/v3/ticker/price', params={'symbol': 'bnbusdt'})
-        response.raise_for_status()  # Проверка наличия ошибок HTTP
-        data = response.json()
-        price = Decimal(data.get('price'))
+    response = requests.get('https://api.binance.com/api/v3/ticker/price')
+    data_list = response.json()
 
-        CurrencyPrice.objects.create(symbol='bnbusdt', price=price)
+    print('API Response:', data_list)
+
+    bnbusdt_data = next((data for data in data_list if data['symbol'] == 'BNBUSDT'), None)
+
+    if bnbusdt_data:
+        price = Decimal(bnbusdt_data.get('price'))
+
+        existing_currency = CurrencyPrice.objects.filter(symbol='bnbusdt').first()
+
+        if existing_currency:
+            existing_currency.price = price
+            existing_currency.save()
+        else:
+            CurrencyPrice.objects.create(symbol='bnbusdt', price=price)
 
         print(f'Binance BNBUSDT Price: {price}')
+    else:
+        print('BNBUSDT data not found in the API response')
 
-    except Exception as e:
-        print(f'Error fetching Binance price: {e}')
 
-
-app = Celery('myapp')
-app.config_from_object('django.conf:settings', namespace='CELERY')
-
-# Запуск задачи каждые 45 секунд
-app.conf.beat_schedule = {
-    'fetch_binance_price': {
-        'task': 'myapp.tasks.fetch_binance_price',
-        'schedule': 45.0,
-    },
-}
