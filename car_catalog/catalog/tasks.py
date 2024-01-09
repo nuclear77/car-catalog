@@ -1,31 +1,20 @@
+from celery import Celery
 from celery import shared_task
-from decimal import Decimal
 import requests
-from .models import CurrencyPrice
-
+from datetime import timedelta
 
 @shared_task
-def fetch_binance_price():
-    response = requests.get('https://api.binance.com/api/v3/ticker/price')
-    data_list = response.json()
+def go_binance():
+    key = "https://api.binance.com/api/v3/ticker/price?symbol="
+    symbol_to_find = "BNBUSDT"
 
-    print('API Response:', data_list)
+    url = key + symbol_to_find
+    response = requests.get(url)
+    data = response.json()
 
-    bnbusdt_data = next((data for data in data_list if data['symbol'] == 'BNBUSDT'), None)
-
-    if bnbusdt_data:
-        price = Decimal(bnbusdt_data.get('price'))
-
-        existing_currency = CurrencyPrice.objects.filter(symbol='bnbusdt').first()
-
-        if existing_currency:
-            existing_currency.price = price
-            existing_currency.save()
-        else:
-            CurrencyPrice.objects.create(symbol='bnbusdt', price=price)
-
-        print(f'Binance BNBUSDT Price: {price}')
+    if 'symbol' in data and 'price' in data:
+        print(f"{data['symbol']} price is {data['price']}")
     else:
-        print('BNBUSDT data not found in the API response')
+        print(f"Data not found for symbol: {symbol_to_find}")
 
 

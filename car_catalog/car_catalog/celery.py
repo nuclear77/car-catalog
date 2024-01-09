@@ -15,14 +15,9 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 
-app = Celery('catalog')
-app.config_from_object('django.conf:settings', namespace='CELERY')
-
-app = Celery('car_catalog')
-
 app.conf.beat_schedule = {
-    'fetch-binance-price': {
-        'task': 'catalog.tasks.fetch_binance_price',
-        'schedule': timedelta(seconds=20),
+    'go-binance-task': {
+        'task': 'catalog.tasks.go_binance',
+        'schedule': timedelta(seconds=10),
     },
 }

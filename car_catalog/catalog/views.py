@@ -16,10 +16,8 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.header import Header
 import base64
-from django.shortcuts import render
-from .models import CurrencyPrice
-from .tasks import fetch_binance_price
-from django.http import HttpResponseServerError
+from .tasks import go_binance
+import requests
 
 
 def car_list(request):
@@ -179,16 +177,20 @@ def send_email(request):
         server.quit()
 
 
-def show_currency_price(request):
-    try:
-        latest_price = CurrencyPrice.objects.latest('timestamp')
-    except CurrencyPrice.DoesNotExist:
-        latest_price = None
+def display_binance_price(request):
+    key = "https://api.binance.com/api/v3/ticker/price?symbol="
+    symbol_to_find = "BNBUSDT"
 
-    context = {
-        'symbol': getattr(latest_price, 'symbol', ''),
-        'price': getattr(latest_price, 'price', ''),
-        'timestamp': getattr(latest_price, 'timestamp', ''),
-    }
+    url = key + symbol_to_find
+    response = requests.get(url)
+    data = response.json()
 
-    return render(request, 'currency_price.html', context)
+    if 'symbol' in data and 'price' in data:
+        symbol = data['symbol']
+        price = data['price']
+    else:
+        symbol = None
+        price = None
+
+    # Рендеринг страницы с использованием шаблона
+    return render(request, 'currency_price.html', {'symbol': symbol, 'price': price, 'symbol_to_find': symbol_to_find})
