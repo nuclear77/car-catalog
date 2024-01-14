@@ -18,6 +18,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'go-binance-task': {
         'task': 'catalog.tasks.go_binance',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(seconds=40),
     },
 }
