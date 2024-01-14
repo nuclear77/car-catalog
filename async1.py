@@ -2,7 +2,6 @@ import multiprocessing
 import time
 from base import data
 
-
 def search_x(start, end, result_queue):
     global data
     start_time = time.time()

@@ -5,7 +5,6 @@ import time
 
 from base import data
 
-
 async def search_x():
     global data
     start_time = time.time()
