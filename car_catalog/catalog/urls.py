@@ -20,3 +20,5 @@ urlpatterns = [
     path('shop/', views.send_email, name='send_email'),
     path('price/', views.display_binance_price, name='display_binance_price'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

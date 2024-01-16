@@ -38,14 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'djoser',
     'users',
-    "debug_toolbar",
+    'debug_toolbar',
     'car_api',
-    'drf_yasg',
     'rest_framework',
+    'drf_yasg',
     'rest_framework.authtoken',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -163,3 +164,16 @@ INTERNAL_IPS = [
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+
+ASGI_APPLICATION = 'car_catalog.routing.application'
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

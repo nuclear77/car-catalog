@@ -23,6 +23,9 @@ from openpyxl import Workbook
 from openpyxl.drawing.image import Image as ExcelImage
 from PIL import Image as PILImage
 from io import BytesIO
+from .models import Message
+from .serializers import MessageSerializer
+
 
 
 
@@ -116,3 +119,13 @@ def export_cars_to_excel(request):
     workbook.save(response)
 
     return response
+
+
+@api_view(['GET'])
+def get_chat_messages(request):
+    messages = Message.objects.all()
+
+    # Сериализуем данные для передачи в формат JSON
+    serializer = MessageSerializer(messages, many=True)
+
+    return Response(serializer.data)

@@ -10,6 +10,7 @@ from .views import (
     CarRetrieveDestroyAPIView,
     # car_search,
     export_cars_to_excel,
+    get_chat_messages,
 )
 
 urlpatterns = [
@@ -23,6 +24,7 @@ urlpatterns = [
     path('cars/<int:pk>/retrieve-update/', CarRetrieveUpdateAPIView.as_view(), name='car-retrieve-update'),
     path('cars/<int:pk>/retrieve-destroy/', CarRetrieveDestroyAPIView.as_view(), name='car-retrieve-destroy'),
     path('cars/export/', export_cars_to_excel, name='export-cars-to-excel'),
+    path('api/chat/messages/', get_chat_messages, name='get_chat_messages'),
 ]
 
 
